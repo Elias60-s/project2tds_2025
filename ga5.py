@@ -106,6 +106,7 @@ def answer_ga5_q4(params: Dict, file_content: str = None) -> str:
         max_bytes = int(max_bytes * scaling_factor)
 
     return json.dumps({"answer": max_bytes})
+
 # Q5: Total Salad units sold in Moscow with 104+ units
 def answer_ga5_q5(params: Dict, file_content: str = None) -> str:
     city = params.get("city", "Moscow")
