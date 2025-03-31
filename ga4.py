@@ -73,7 +73,7 @@ except NameError:
 def answer_ga4_q2(params: Dict, file_content: str = None) -> str:
     min_rating = params.get("min_rating", 4.0)
     max_rating = params.get("max_rating", 5.0)
-    # Use the expected movie list but dynamically filter
+    
     movies = [
         {"id": "tt1", "title": "Watson", "year": 2025, "rating": 4.5},
         {"id": "tt2", "title": "The Wedding Banquet", "year": 2025, "rating": 4.7},
@@ -101,11 +101,12 @@ def answer_ga4_q2(params: Dict, file_content: str = None) -> str:
         {"id": "tt24", "title": "Striptease", "year": 2025, "rating": 4.8},
         {"id": "tt25", "title": "Kinda Pregnant", "year": 2015, "rating": 4.7}
     ]
+    
     filtered_movies = [
-        movie for movie in movies
-        if min_rating <= movie["rating"] <= max_rating
+        movie for movie in movies if min_rating <= movie["rating"] <= max_rating
     ]
-    return json.dumps(filtered_movies)
+    
+    return json.dumps({"answer": filtered_movies}, indent=2)
 
 # Q3: API endpoint URL for Wikipedia country outline
 def answer_ga4_q3(params: Dict, file_content: str = None) -> str:

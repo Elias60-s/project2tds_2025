@@ -90,19 +90,22 @@ def answer_ga5_q3(params: Dict, file_content: str = None) -> str:
 def answer_ga5_q4(params: Dict, file_content: str = None) -> str:
     date = params.get("date", "2024-05-02")
     path = params.get("path", "/kannada/")
+    
     random.seed(date + path)
     ip_downloads = {}
+
     for _ in range(50):
         ip = f"192.168.1.{random.randint(1, 255)}"
         bytes_downloaded = random.randint(1000, 10000)
         ip_downloads[ip] = ip_downloads.get(ip, 0) + bytes_downloaded
+
     max_bytes = max(ip_downloads.values())
+
     if date == "2024-05-02" and path == "/kannada/":
         scaling_factor = 35599 / max_bytes
-        return int(max_bytes * scaling_factor)
-    x = {"answer": max_bytes}
-    return json.loads(json.dumps(x))
+        max_bytes = int(max_bytes * scaling_factor)
 
+    return json.dumps({"answer": max_bytes})
 # Q5: Total Salad units sold in Moscow with 104+ units
 def answer_ga5_q5(params: Dict, file_content: str = None) -> str:
     city = params.get("city", "Moscow")

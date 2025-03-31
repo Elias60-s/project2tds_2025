@@ -89,7 +89,7 @@ def answer_ga3_q3(params: Dict, file_content: str = None) -> str:
             "zip": 10000 + i
         } for i in range(1, num_addresses + 1)
     ]
-    return json.dumps({
+    return json.dumps({"answer": {
         "model": "gpt-4o-mini",
         "messages": [
             {"role": "system", "content": "Respond in JSON"},
@@ -119,6 +119,9 @@ def answer_ga3_q3(params: Dict, file_content: str = None) -> str:
                     },
                     "required": ["addresses"],
                     "additionalProperties": False  # Changed 'false' to 'False'
+        
+
+    }
                 }
             }
         },
@@ -202,7 +205,7 @@ def answer_ga3_q5(params: Dict, file_content: str = None) -> str:
     }
 
     # Return the JSON body as a formatted string
-    return json.dumps(json_body, indent=2)
+    return json.dumps({"answer": json_body}, indent=2)
 
 
 def answer_ga3_q6(params: Dict, file_content: str = None) -> str:

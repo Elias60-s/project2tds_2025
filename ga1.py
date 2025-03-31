@@ -67,7 +67,7 @@ def ga1_q2(params: Dict, file_content: str = None) -> str:
         response = requests.get(url)
         if response.status_code != 200:
             return f"Error: Failed to fetch URL {url}. Status code: {response.status_code}"
-        x = response.text.strip()
+        x = {"answer":response.text.strip()}
         return json.loads(json.dumps(x))
     except Exception as e:
         return f"Error: {str(e)}"
