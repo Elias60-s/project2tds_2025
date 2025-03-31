@@ -27,7 +27,6 @@ fastapi
 uvicorn
 openai
 importlib
-json
 zipfile
 mangum
 gunicorn==20.1.0
