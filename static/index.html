@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIT Madras Assignment Helper</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        p.subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .input-section {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .input-section label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .input-section input[type="text"],
+        .input-section input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        .input-section input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .input-section input[type="file"]::file-selector-button {
+            padding: 8px 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            background-color: #ecf0f1;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .input-section input[type="file"]::file-selector-button:hover {
+            background-color: #dfe6e9;
+        }
+        button {
+            padding: 14px 30px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        button:hover:enabled {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            text-align: left;
+            background-color: #f9f9f9;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        .result img {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .result pre {
+            margin: 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        .result button {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background-color: #3498db;
+            width: auto;
+        }
+        .result button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IIT Madras TDS Project 2</h1>
+        <p class="subtitle">Welcome to the Assignment Helper! This tool helps you find answers to IIT Madras Data Science graded assignment questions.</p>
+        <div class="input-section">
+            <label for="questionText">Ask a Question</label>
+            <input type="text" id="questionText" placeholder="e.g., GA1-Q1 or What is GA1-Q1?" oninput="checkInput()" />
+            <label for="fileInput">Upload assignment file (optional)</label>
+            <input type="file" id="fileInput" accept="image/png,application/zip,text/plain,text/html,text/csv" />
+        </div>
+        <button id="outputButton" onclick="getAnswer()" disabled>Get Answer</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const BASE_URL = "http://localhost:8000";
+
+        function checkInput() {
+            const questionText = document.getElementById("questionText").value.trim();
+            document.getElementById("outputButton").disabled = !questionText;
+        }
+
+        async function getAnswer() {
+            const questionText = document.getElementById("questionText").value.trim();
+            const fileInput = document.getElementById("fileInput");
+            const resultDiv = document.getElementById("result");
+
+            if (!questionText) {
+                resultDiv.innerHTML = "Please enter a question.";
+                return;
+            }
+
+            const normalizedText = questionText.toUpperCase();
+            if (!normalizedText.match(/^GA[1-5]-Q([1-9]|1[0-8])$/)) {
+                resultDiv.innerHTML = "Invalid question format. Use GA1-Q1 format.";
+                return;
+            }
+
+            resultDiv.innerHTML = "Fetching answer...";
+
+            const formData = new FormData();
+            formData.append("question", normalizedText);
+
+            if (fileInput.files.length > 0) {
+                formData.append("file", fileInput.files[0]);
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}/api`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorText}`);
+                }
+
+                const data = await response.json();
+
+                if (typeof data.answer === "string" && data.answer.startsWith("iVBORw0KGgo")) {
+                    resultDiv.innerHTML = `
+                        <p><strong>${normalizedText} Answer:</strong></p>
+                        <img src="data:image/png;base64,${data.answer}" alt="Generated Image" />
+                        <br>
+                        <button onclick="downloadImage('${data.answer}')">Download Image</button>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p><strong>${normalizedText} Answer:</strong></p>
+                        <pre>${data.answer}</pre>
+                    `;
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                resultDiv.innerHTML = `Error: ${error.message}. Ensure the server is running at ${BASE_URL}.`;
+            }
+        }
+
+        function downloadImage(base64) {
+            const link = document.createElement("a");
+            link.href = `data:image/png;base64,${base64}`;
+            link.download = "output_image.png";
+            link.click();
+        }
+    </script>
+</body>
+</html>
